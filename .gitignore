@@ -1,0 +1,6 @@
+__trash
+node_modules
+
+# only commit common.js version for now
+dist/vue.umd*
+dist/demo.html

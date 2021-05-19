@@ -1,0 +1,36 @@
+{
+  "name": "@unrest/vue-mousetrap",
+  "author": "Chris Cauley <cauley.chris@gmail.com>",
+  "version": "0.1.1",
+  "main": "dist/vue-mousetrap.common.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "vue-cli-service build --target lib src/index.js --no-clean",
+    "lint": "vue-cli-service lint"
+  },
+  "peerDependencies": {
+    "core-js": "^3.6.5",
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "babel-eslint": "^10.1.0",
+    "core-js": "^3.6.5",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^7.0.0-0",
+    "vue": "^3.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "dependencies": {
+    "mousetrap": "^1.6.5"
+  }
+}
