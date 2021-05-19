@@ -1,7 +1,7 @@
 {
   "name": "@unrest/vue-mousetrap",
   "author": "Chris Cauley <cauley.chris@gmail.com>",
-  "version": "0.1.1",
+  "version": "0.0.1",
   "main": "dist/vue-mousetrap.common.js",
   "license": "MIT",
   "scripts": {
