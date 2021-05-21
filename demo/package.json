@@ -21,9 +21,11 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-vue": "^7.0.0-0",
     "mousetrap": "^1.6.5",
+    "raw-loader": "^4.0.2",
     "sass": "^1.32.8",
     "sass-loader": "^10.0.3",
     "scss": "^0.2.4",
+    "simple-syntax-highlighter": "^2.0.5",
     "vue": "^3.0.0"
   },
   "browserslist": [

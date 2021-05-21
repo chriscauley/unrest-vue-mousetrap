@@ -29,8 +29,11 @@ const config = ({ namespace = "mousetrap", delimiter = "|", local }) => ({
         }
         const { repeat, keydown, keyup, keypress } = options;
 
-        repeat && bind(key, e => e.repeat && repeat(e));
-        keydown && bind(key, e => !e.repeat && keydown(e));
+        if (repeat) {
+          bind(key, e => e.repeat ? repeat(e) : keydown(e))
+        } else if (keydown) {
+          bind(key, e => !e.repeat && keydown(e));
+        }
         keyup && bind(key, keyup, "keyup");
         keypress && bind(key, keypress, "keypress");
       });

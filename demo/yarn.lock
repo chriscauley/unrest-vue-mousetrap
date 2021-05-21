@@ -6814,6 +6814,14 @@ raw-body@2.4.0:
     iconv-lite "0.4.24"
     unpipe "1.0.0"
 
+raw-loader@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/raw-loader/-/raw-loader-4.0.2.tgz#1aac6b7d1ad1501e66efdac1522c73e59a584eb6"
+  integrity sha512-ZnScIV3ag9A4wPX/ZayxL/jZH+euYb6FcUinPcgiQW0+UBtEv0O6Q3lGd3cqJ+GHH+rksEv3Pj99oxJ3u3VIKA==
+  dependencies:
+    loader-utils "^2.0.0"
+    schema-utils "^3.0.0"
+
 read-pkg@^5.1.1:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/read-pkg/-/read-pkg-5.2.0.tgz#7bf295438ca5a33e56cd30e053b34ee7250c93cc"
@@ -7350,6 +7358,11 @@ simple-swizzle@^0.2.2:
   integrity sha1-pNprY1/8zMoz9w0Xy5JZLeleVXo=
   dependencies:
     is-arrayish "^0.3.1"
+
+simple-syntax-highlighter@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/simple-syntax-highlighter/-/simple-syntax-highlighter-2.0.5.tgz#ecc35a421456f53a745350537d8d2e7a7a691b04"
+  integrity sha512-sMEX1M63BM2b/CDfMdudHCMgb3AMv/uw21c+yaV+IsnOoDeyVU8mydgO1CEeE1r/aAdekMMYLn75aX07Z0/G3A==
 
 slash@^1.0.0:
   version "1.0.0"

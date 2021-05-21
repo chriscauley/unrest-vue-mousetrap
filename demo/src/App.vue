@@ -2,16 +2,12 @@
   <div>
     <h1>@ur/vue-mousetrap</h1>
     <h2>Simple hotkeys for vue</h2>
-    <div v-if="paused">Game paused, press p to resume</div>
-    <div v-else>
-      <div>List of current moves</div>
-      <ul>
-        <li v-for="_move in moves" :key="_move">
-          {{ _move }}
-        </li>
-      </ul>
-      <div v-if="undo_stack.length">
-        {{ undo_stack.length }} moves to be undone
+    <div class="code-wrapper">
+      <ssh-pre language="js" :data-line="5">{{ code }}</ssh-pre>
+      <div class="lines">
+        <div v-for="(_, i) in code.split('\n')" :key="i" :class="css(i)">
+          {{ counts[i] }}
+        </div>
       </div>
     </div>
   </div>
@@ -19,43 +15,94 @@
 
 <script>
 import MousetrapMixin from "@ur/vue-mousetrap";
+import code from "raw-loader!./lines.txt";
 
 export default {
   mixins: [MousetrapMixin],
   data() {
-    return { paused: false, message: null, moves: [], undo_stack: [] };
+    return { code, counts: {}, highlighted: [], last: [], paused: false };
   },
   computed: {
     mousetrap() {
       if (this.paused) {
-        return { p: this.pause };
+        // if this.mousetrap is computed, it will be reactive
+        return {
+          p: () => {
+            this.paused = false;
+            this.highlight([11, 12, 13, 14]);
+          }
+        };
       }
       return {
-        "up|down|left|right|b|a": this.move,
-        p: this.pause,
-        "ctrl+z": this.undo,
-        "ctrl+y": this.redo
+        p: () => {
+          this.paused = true;
+          this.highlight([18, 19, 20, 21]);
+        },
+
+        // multiple keys can be specified with pipe
+        "up|down|left|right|b|a": () => this.highlight([24]),
+
+        // behavior can be customized with an object, all values are optional
+        "?|/|del": {
+          keydown: () => this.highlight([28]),
+          keyup: () => this.highlight([29])
+        },
+
+        // repeat keys fire when held down
+        q: {
+          repeat: () => this.highlight([34])
+        },
+
+        // global hotkeys will work even on input/textarea/select fields
+        "ctrl+b|command+b": {
+          global: true,
+          keydown: () => this.highlight([38, 39, 40, 41])
+        }
       };
     }
   },
   methods: {
-    move(event) {
-      this.moves.push(event.key.toLowerCase().replace("arrow", ""));
-      this.undo_stack = [];
+    highlight(items) {
+      this.highlighted = items;
+      items.forEach(i => (this.counts[i] = (this.counts[i] || 0) + 1));
+      setTimeout(() => {
+        this.last = this.highlighted;
+        this.highlighted = [];
+      }, 0);
     },
-    pause() {
-      this.paused = !this.paused;
-    },
-    undo() {
-      if (this.moves.length) {
-        this.undo_stack.push(this.moves.pop());
-      }
-    },
-    redo() {
-      if (this.undo_stack.length) {
-        this.moves.push(this.undo_stack.pop());
-      }
+    css(i) {
+      return [
+        "line",
+        { "bg-blue-300": this.highlighted.includes(i) },
+        { "bg-gray-200": this.last.includes(i) }
+      ];
     }
   }
 };
 </script>
+
+<style lang="scss">
+.code-wrapper {
+  max-width: 850px;
+  position: relative;
+  .lines {
+    padding: 0.5em;
+    position: absolute;
+    inset: 0;
+    .line {
+      height: 1.5em;
+      transition: 0.25s;
+      &.bg-blue-300 {
+        transition: 0s;
+      }
+    }
+  }
+  .ssh-pre__content span {
+    position: relative;
+    z-index: 1;
+  }
+  .ssh-pre {
+    padding-left: 4rem;
+  }
+}
+</style>

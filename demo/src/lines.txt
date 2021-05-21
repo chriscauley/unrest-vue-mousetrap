@@ -1,0 +1,48 @@
+<script>
+import MousetrapMixin from "@ur/vue-mousetrap";
+
+export default {
+  mixins: [MousetrapMixin],
+  data() {...},
+  computed: {
+    mousetrap() {
+      if (this.paused) {
+        // if this.mousetrap is computed, it will be reactive
+        return {
+          p: () => {
+            this.paused = false
+            this.highlight([11, 12, 13, 14])
+          }
+        };
+      }
+      return {
+        p: () => {
+          this.paused = true
+          this.highlight([18, 19, 20, 21])
+        },
+
+        // multiple keys can be specified with pipe
+        "up|down|left|right|b|a": () => this.highlight([24]),
+
+        // behavior can be customized with an object (default is keydown only)
+        '?|/|del': {
+          keydown: () => this.highlight([28]),
+          keyup: () => this.highlight([29]),
+        },
+
+        // repeat keys fire when held down
+        q: {
+          repeat: () => this.highlight([34]),
+        },
+
+        // global hotkeys will work even on input/textarea/select fields
+        'ctrl+b|command+b': {
+          global: true,
+          keydown: () => this.highlight([38, 39, 40, 41]),
+        },
+      };
+    },
+  },
+  methods: { ... }
+}
+</script>
