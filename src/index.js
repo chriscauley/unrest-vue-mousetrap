@@ -1,7 +1,7 @@
 import Mousetrap from "mousetrap";
 import "./globalBind";
 
-const config = ({ namespace = "mousetrap", delimiter = "|", local }) => ({
+const config = ({ namespace = "mousetrap", delimiter = ",", local }) => ({
   watch: { [namespace]: "_sync" + namespace },
   mounted() {
     this["_sync" + namespace]();

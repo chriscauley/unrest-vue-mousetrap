@@ -21,13 +21,13 @@ export default {
       }
       return {
         esc: this.pause,
-        'space|x|enter': this.useItem, // 2
-        'up|down|left|right': (event) => this.move(event.key), // 3
+        'space,x,enter': this.useItem, // 2
+        'up,down,left,right': (event) => this.move(event.key), // 3
         '?': { // 4
           keydown: this.showHelp,
           keyup: this.hideHelp,
         },
-        'up up down down left right left right b a|mod+shift+q': this.toggleCheat // 5
+        'up up down down left right left right b a,mod+shift+q': this.toggleCheat // 5
       }
     }
   },
@@ -41,7 +41,7 @@ Notes:
 
 1. Because this is a computed property, hotkeys will be reloaded any time `this.paused` is changed. Other hotkeys (arrows and help menu) will not be available while paused.
 
-2. Multiple hotkeys can be specified if separated by a pipe `|`. This delimiter can be set using mixin config options below.
+2. Multiple hotkeys can be specified if separated by a comma `,`. This delimiter can be set using mixin config options below.
 
 3. The first argument passed into an action is the native keyboard event. Also, arrow functions are the best.
 
@@ -85,7 +85,7 @@ If the action is specified as a function, the hotkey will default to executing t
       keyup: this.stopSomething,
       global: true, // all the above work anywhere, including inputs
     },
-    'up|down|left|right': {
+    'up,down,left,right': {
       repeat: this.move, // holding down arrows spams repeat, keydown is this.move
     },
     'ctrl+s': {
