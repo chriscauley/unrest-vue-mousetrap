@@ -1,0 +1,68 @@
+<script>
+import MousetrapMixin from "@ur/vue-mousetrap";
+import code from "raw-loader!./demos/Basics.txt";
+
+export default {
+  mixins: [MousetrapMixin],
+  data() {
+    return { code, highlighted: [], paused: false };
+  },
+  computed: {
+    mousetrap() {
+      if (this.paused) {
+        // if this.mousetrap is computed, it will be reactive
+        return {
+          p: () => {
+            this.paused = false;
+            this.highlighted = [15, 16, 17, 18];
+          }
+        };
+      }
+      return {
+        p: () => {
+          this.paused = true;
+          this.highlighted = [22, 23, 24, 25];
+        },
+
+        // multiple keys can be specified with commas
+        "a,b": () => (this.highlighted = [28]),
+
+        // behavior can be customized with an object, all values are optional
+        "?,/,del": {
+          keydown: () => (this.highlighted = [32]),
+          keyup: () => (this.highlighted = [33])
+        },
+
+        // repeat keys fire when held down
+        q: {
+          repeat: () => (this.highlighted = [38])
+        },
+
+        // global hotkeys will work even on input/textarea/select fields
+        "ctrl+b,command+b": {
+          global: true,
+          keydown: () => (this.highlighted = [44])
+        }
+      };
+    }
+  }
+};
+</script>
+
+<template>
+  <!-- Here is the html. I put the <template> tag at the bottom to keep the code above the fold ¯\_(ツ)_/¯ -->
+  <p>
+    Below is the source code for this page. To start, press "p" to pause the app
+    and highlight relevant lines of code
+  </p>
+  <div v-if="paused" class="modal">
+    <div class="modal-mask" />
+    <div class="modal-content">
+      <h2>Paused</h2>
+      The app currently paused. The lines executed are highlighted in the source
+      code and the left column tells how many times that line has been executed.
+      Press "p" again and then scroll down to see more hotkey examples.
+    </div>
+  </div>
+  <highlighter :lines="highlighted" :code="code" />
+</template>

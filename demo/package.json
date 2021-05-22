@@ -9,6 +9,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@unrest/tailwind": "^0.0.9",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
@@ -26,7 +27,8 @@
     "sass-loader": "^10.0.3",
     "scss": "^0.2.4",
     "simple-syntax-highlighter": "^2.0.5",
-    "vue": "^3.0.0"
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.3"
   },
   "browserslist": [
     "> 1%",

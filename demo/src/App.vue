@@ -1,60 +1,47 @@
 <template>
   <div>
     <h1>@ur/vue-mousetrap</h1>
-    <h2>Simple hotkeys for vue</h2>
-    <Highlighter :lines="highlighted" :code="code" />
+    <h3>Simple and self-documenting hotkeys for vue</h3>
+    <div class="tabs">
+      <div :class="css.tab(tab)" v-for="tab in tabs" :key="tab[0]">
+        <router-link :to="tab[0]">{{ tab[1] }}</router-link>
+      </div>
+    </div>
+    <router-view />
   </div>
 </template>
 
 <script>
-import MousetrapMixin from "@ur/vue-mousetrap";
-import Highlighter from "./components/Highlighter";
-import code from "raw-loader!./lines.txt";
+const tabs = [
+  ["/", "Basics"],
+  ["/mousetrap", "Mousetrap"]
+];
 
 export default {
-  components: { Highlighter },
-  mixins: [MousetrapMixin],
   data() {
-    return { code, highlighted: [], paused: false };
+    return { tabs };
   },
   computed: {
-    mousetrap() {
-      if (this.paused) {
-        // if this.mousetrap is computed, it will be reactive
-        return {
-          p: () => {
-            this.paused = false;
-            this.highlighted = [11, 12, 13, 14];
-          }
-        };
-      }
+    css() {
       return {
-        p: () => {
-          this.paused = true;
-          this.highlighted = [18, 19, 20, 21];
-        },
-
-        // multiple keys can be specified with commas
-        "a,b": () => (this.highlighted = [24]),
-
-        // behavior can be customized with an object, all values are optional
-        "?,/,del": {
-          keydown: () => (this.highlighted = [28]),
-          keyup: () => (this.highlighted = [29])
-        },
-
-        // repeat keys fire when held down
-        q: {
-          repeat: () => (this.highlighted = [34])
-        },
-
-        // global hotkeys will work even on input/textarea/select fields
-        "ctrl+b,command+b": {
-          global: true,
-          keydown: () => (this.highlighted = [38, 39, 40, 41])
-        }
+        tab: ([path]) => [
+          "btn",
+          path === this.$route.path ? "-primary" : "-light"
+        ]
       };
     }
   }
 };
 </script>
+
+<style>
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #ccc;
+  padding: 0 1rem 1rem;
+}
+
+.tabs .btn {
+  margin-right: 1rem;
+}
+</style>
