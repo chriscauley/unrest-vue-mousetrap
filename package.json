@@ -5,17 +5,15 @@
   "main": "dist/vue-mousetrap.common.js",
   "license": "MIT",
   "scripts": {
-    "build": "vue-cli-service build --target lib src/index.js --no-clean",
-    "lint": "vue-cli-service lint"
+    "build": "vite build",
+    "lint": "eslint src/* src/**/*"
   },
   "peerDependencies": {
     "core-js": "^3.6.5",
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vitejs/plugin-vue": "^1.2.2",
     "@vue/compiler-sfc": "^3.0.0",
     "babel-eslint": "^10.1.0",
     "core-js": "^3.6.5",
@@ -23,8 +21,8 @@
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.0.0-0",
-    "vue": "^3.0.0",
-    "vue-cli-plugin-webpack-bundle-analyzer": "^4.0.0"
+    "vite": "^2.3.3",
+    "vue": "^3.0.0"
   },
   "browserslist": [
     "> 1%",
