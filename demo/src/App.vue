@@ -1,20 +1,24 @@
 <template>
-  <div>
-    <h1>@ur/vue-mousetrap</h1>
-    <h3>Simple and self-documenting hotkeys for vue</h3>
-    <div class="tabs">
-      <div :class="css.tab(tab)" v-for="tab in tabs" :key="tab[0]">
-        <router-link :to="tab[0]">{{ tab[1] }}</router-link>
+  <div class="app-root">
+    <header class="navbar">
+      <div class="navbar-brand">@ur/vue-mousetrap</div>
+      <div class="navbar-section flex items-center">
+        <div :class="css.tab(tab)" v-for="tab in tabs" :key="tab[0]">
+          <router-link :to="tab[0]">{{ tab[1] }}</router-link>
+        </div>
       </div>
+    </header>
+    <div class="app-view">
+      <router-view />
     </div>
-    <router-view />
   </div>
 </template>
 
 <script>
 const tabs = [
   ["/", "Basics"],
-  ["/mousetrap", "Mousetrap"]
+  ["/mousetrap", "Mousetrap"],
+  ["/help-modal", "Help Modal"]
 ];
 
 export default {
@@ -35,10 +39,16 @@ export default {
 </script>
 
 <style>
-.tabs {
-  display: flex;
-  border-bottom: 2px solid #ccc;
-  padding: 0 1rem 1rem;
+body {
+  background: #eee;
+}
+.app-root {
+  background: white;
+  margin: auto;
+  width: 900px;
+}
+.app-view {
+  padding: 2rem;
 }
 
 .tabs .btn {

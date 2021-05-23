@@ -1,9 +1,9 @@
 <script>
-import MousetrapMixin from "@ur/vue-mousetrap";
+import Mousetrap from "@ur/vue-mousetrap";
 import code from "raw-loader!./demos/Mousetrap.txt";
 
 export default {
-  mixins: [MousetrapMixin],
+  mixins: [Mousetrap.Mixin],
   data() {
     return { code, highlighted: [], paused: false };
   },

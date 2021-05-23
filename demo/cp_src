@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+for NAME in Basics Mousetrap HelpModal;
+do
+    echo src/$NAME.vue src/demos/$NAME.txt
+    cp src/$NAME.vue src/demos/$NAME.txt
+done

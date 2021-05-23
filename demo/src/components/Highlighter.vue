@@ -40,7 +40,6 @@ export default {
 
 <style lang="scss">
 .code-wrapper {
-  width: 850px;
   position: relative;
   .lines {
     padding: 0.5em;

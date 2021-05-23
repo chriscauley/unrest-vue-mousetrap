@@ -1,34 +1,34 @@
 <script>
-import MousetrapMixin from "@ur/vue-mousetrap";
+import Mousetrap from "@ur/vue-mousetrap";
 import code from "raw-loader!./demos/Basics.txt";
 
 export default {
-  mixins: [MousetrapMixin],
+  mixins: [Mousetrap.Mixin],
   data() {
-    return { code, highlighted: [], paused: false };
+    return { code, highlighted: [], show_welcome: false };
   },
   computed: {
     mousetrap() {
-      if (this.paused) {
+      if (this.show_welcome) {
         // if this.mousetrap is computed, it will be reactive
         return {
-          p: () => {
-            this.paused = false;
+          enter: () => {
+            this.show_welcome = false;
             this.highlighted = [15, 16, 17, 18];
           }
         };
       }
       return {
-        p: () => {
-          this.paused = true;
+        enter: () => {
+          this.show_welcome = true;
           this.highlighted = [22, 23, 24, 25];
         },
 
         // multiple keys can be specified with commas
         "a,b": () => (this.highlighted = [28]),
 
-        // behavior can be customized with an object, all values are optional
-        "?,/,del": {
+        // behavior can be customized with an object
+        "?,/": {
           keydown: () => (this.highlighted = [32]),
           keyup: () => (this.highlighted = [33])
         },
@@ -38,7 +38,7 @@ export default {
           repeat: () => (this.highlighted = [38])
         },
 
-        // global hotkeys will work even on input/textarea/select fields
+        // global hotkeys will work even on input fields
         "ctrl+b,command+b": {
           global: true,
           keydown: () => (this.highlighted = [44])
@@ -51,21 +51,19 @@ export default {
 
 <template>
   <!-- Here is the html. I put the <template> tag at the bottom to keep the code above the fold ¯\_(ツ)_/¯ -->
-  <p>
-    Below is the source code for this page. To start, press "p" to pause the app
-    and highlight relevant lines of code
+  <p class="text-xl text-center">
+    Press enter to get started.
   </p>
-  <div v-if="paused" class="modal">
+  <div v-if="show_welcome" class="modal">
     <div class="modal-mask" />
-    <div class="modal-content">
-      <h2>Paused</h2>
+    <div class="modal-content" style="width: 350px">
+      <h2>Welcome!</h2>
       <p>
-        The app currently paused. The lines executed are highlighted in the
-        source code and the left column tells how many times that line has been
-        executed.
+        The lines are highlighted in the source code when they are executed. The
+        left column tells how many times that line has been triggered.
       </p>
       <p>
-        Press "p" again and then scroll down to see more hotkey examples.
+        Press "enter" again and then scroll down to see more hotkey examples.
       </p>
     </div>
   </div>

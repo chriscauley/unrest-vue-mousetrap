@@ -4,8 +4,8 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --dest ../docs",
+    "serve": "./cp_src && yarn vue-cli-service serve",
+    "build": "./cp_src && yarn vue-cli-service build --dest ../docs",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

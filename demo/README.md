@@ -6,6 +6,9 @@ yarn install
 ```
 
 ### Compiles and hot-reloads for development
+
+Any changes to self documenting pages (Basics.vue, etc) will require stopping and starting the dev server.
+
 ```
 yarn serve
 ```
