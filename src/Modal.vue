@@ -11,9 +11,9 @@
             <tr v-for="action in group.actions" :key="action.slug">
               <td>
                 {{ action.name }}
-                <span v-if="action.description" :title="action.description"
-                  >❓</span
-                >
+                <span v-if="action.description" :title="action.description">
+                  ❓
+                </span>
               </td>
               <td>{{ action.display }}</td>
             </tr>

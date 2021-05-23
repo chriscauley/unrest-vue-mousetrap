@@ -189,6 +189,53 @@ exports.f = DESCRIPTORS ? nativeGetOwnPropertyDescriptor : function getOwnProper
 
 /***/ }),
 
+/***/ "0cb2":
+/***/ (function(module, exports, __webpack_require__) {
+
+var toObject = __webpack_require__("7b0b");
+
+var floor = Math.floor;
+var replace = ''.replace;
+var SUBSTITUTION_SYMBOLS = /\$([$&'`]|\d\d?|<[^>]*>)/g;
+var SUBSTITUTION_SYMBOLS_NO_NAMED = /\$([$&'`]|\d\d?)/g;
+
+// https://tc39.es/ecma262/#sec-getsubstitution
+module.exports = function (matched, str, position, captures, namedCaptures, replacement) {
+  var tailPos = position + matched.length;
+  var m = captures.length;
+  var symbols = SUBSTITUTION_SYMBOLS_NO_NAMED;
+  if (namedCaptures !== undefined) {
+    namedCaptures = toObject(namedCaptures);
+    symbols = SUBSTITUTION_SYMBOLS;
+  }
+  return replace.call(replacement, symbols, function (match, ch) {
+    var capture;
+    switch (ch.charAt(0)) {
+      case '$': return '$';
+      case '&': return matched;
+      case '`': return str.slice(0, position);
+      case "'": return str.slice(tailPos);
+      case '<':
+        capture = namedCaptures[ch.slice(1, -1)];
+        break;
+      default: // \d\d?
+        var n = +ch;
+        if (n === 0) return match;
+        if (n > m) {
+          var f = floor(n / 10);
+          if (f === 0) return match;
+          if (f <= m) return captures[f - 1] === undefined ? ch.charAt(1) : captures[f - 1] + ch.charAt(1);
+          return match;
+        }
+        capture = captures[n - 1];
+    }
+    return capture === undefined ? '' : capture;
+  });
+};
+
+
+/***/ }),
+
 /***/ "0cfb":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -827,39 +874,6 @@ module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperti
 
 /***/ }),
 
-/***/ "3835":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, "a", function() { return /* reexport */ _slicedToArray; });
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/arrayWithHoles/index.js
-var arrayWithHoles = __webpack_require__("82ea");
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/iterableToArrayLimit/index.js
-var iterableToArrayLimit = __webpack_require__("3393");
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/unsupportedIterableToArray/index.js
-var unsupportedIterableToArray = __webpack_require__("a3f3");
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/nonIterableRest/index.js
-var nonIterableRest = __webpack_require__("7e0a");
-
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/slicedToArray/_index.mjs
-
-
-
-
-function _slicedToArray(arr, i) {
-  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || unsupportedIterableToArray(arr, i) || nonIterableRest();
-}
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
-
-
-/***/ }),
-
 /***/ "38cf":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1197,6 +1211,112 @@ module.exports = function (it, key) {
 
 /***/ }),
 
+/***/ "5319":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var fixRegExpWellKnownSymbolLogic = __webpack_require__("d784");
+var anObject = __webpack_require__("825a");
+var toLength = __webpack_require__("50c4");
+var toInteger = __webpack_require__("a691");
+var requireObjectCoercible = __webpack_require__("1d80");
+var advanceStringIndex = __webpack_require__("8aa5");
+var getSubstitution = __webpack_require__("0cb2");
+var regExpExec = __webpack_require__("14c3");
+
+var max = Math.max;
+var min = Math.min;
+
+var maybeToString = function (it) {
+  return it === undefined ? it : String(it);
+};
+
+// @@replace logic
+fixRegExpWellKnownSymbolLogic('replace', 2, function (REPLACE, nativeReplace, maybeCallNative, reason) {
+  var REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE = reason.REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE;
+  var REPLACE_KEEPS_$0 = reason.REPLACE_KEEPS_$0;
+  var UNSAFE_SUBSTITUTE = REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE ? '$' : '$0';
+
+  return [
+    // `String.prototype.replace` method
+    // https://tc39.es/ecma262/#sec-string.prototype.replace
+    function replace(searchValue, replaceValue) {
+      var O = requireObjectCoercible(this);
+      var replacer = searchValue == undefined ? undefined : searchValue[REPLACE];
+      return replacer !== undefined
+        ? replacer.call(searchValue, O, replaceValue)
+        : nativeReplace.call(String(O), searchValue, replaceValue);
+    },
+    // `RegExp.prototype[@@replace]` method
+    // https://tc39.es/ecma262/#sec-regexp.prototype-@@replace
+    function (regexp, replaceValue) {
+      if (
+        (!REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE && REPLACE_KEEPS_$0) ||
+        (typeof replaceValue === 'string' && replaceValue.indexOf(UNSAFE_SUBSTITUTE) === -1)
+      ) {
+        var res = maybeCallNative(nativeReplace, regexp, this, replaceValue);
+        if (res.done) return res.value;
+      }
+
+      var rx = anObject(regexp);
+      var S = String(this);
+
+      var functionalReplace = typeof replaceValue === 'function';
+      if (!functionalReplace) replaceValue = String(replaceValue);
+
+      var global = rx.global;
+      if (global) {
+        var fullUnicode = rx.unicode;
+        rx.lastIndex = 0;
+      }
+      var results = [];
+      while (true) {
+        var result = regExpExec(rx, S);
+        if (result === null) break;
+
+        results.push(result);
+        if (!global) break;
+
+        var matchStr = String(result[0]);
+        if (matchStr === '') rx.lastIndex = advanceStringIndex(S, toLength(rx.lastIndex), fullUnicode);
+      }
+
+      var accumulatedResult = '';
+      var nextSourcePosition = 0;
+      for (var i = 0; i < results.length; i++) {
+        result = results[i];
+
+        var matched = String(result[0]);
+        var position = max(min(toInteger(result.index), S.length), 0);
+        var captures = [];
+        // NOTE: This is equivalent to
+        //   captures = result.slice(1).map(maybeToString)
+        // but for some reason `nativeSlice.call(result, 1, result.length)` (called in
+        // the slice polyfill when slicing native arrays) "doesn't work" in safari 9 and
+        // causes a crash (https://pastebin.com/N21QzeQA) when trying to debug it.
+        for (var j = 1; j < result.length; j++) captures.push(maybeToString(result[j]));
+        var namedCaptures = result.groups;
+        if (functionalReplace) {
+          var replacerArgs = [matched].concat(captures, position, S);
+          if (namedCaptures !== undefined) replacerArgs.push(namedCaptures);
+          var replacement = String(replaceValue.apply(undefined, replacerArgs));
+        } else {
+          replacement = getSubstitution(matched, S, position, captures, namedCaptures, replaceValue);
+        }
+        if (position >= nextSourcePosition) {
+          accumulatedResult += S.slice(nextSourcePosition, position) + replacement;
+          nextSourcePosition = position + matched.length;
+        }
+      }
+      return accumulatedResult + S.slice(nextSourcePosition);
+    }
+  ];
+});
+
+
+/***/ }),
+
 /***/ "5692":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1302,6 +1422,66 @@ module.exports = function (bitmap, value) {
     value: value
   };
 };
+
+
+/***/ }),
+
+/***/ "60da":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__("83ab");
+var fails = __webpack_require__("d039");
+var objectKeys = __webpack_require__("df75");
+var getOwnPropertySymbolsModule = __webpack_require__("7418");
+var propertyIsEnumerableModule = __webpack_require__("d1e7");
+var toObject = __webpack_require__("7b0b");
+var IndexedObject = __webpack_require__("44ad");
+
+var nativeAssign = Object.assign;
+var defineProperty = Object.defineProperty;
+
+// `Object.assign` method
+// https://tc39.es/ecma262/#sec-object.assign
+module.exports = !nativeAssign || fails(function () {
+  // should have correct order of operations (Edge bug)
+  if (DESCRIPTORS && nativeAssign({ b: 1 }, nativeAssign(defineProperty({}, 'a', {
+    enumerable: true,
+    get: function () {
+      defineProperty(this, 'b', {
+        value: 3,
+        enumerable: false
+      });
+    }
+  }), { b: 2 })).b !== 1) return true;
+  // should work with symbols and should have deterministic property order (V8 bug)
+  var A = {};
+  var B = {};
+  /* global Symbol -- required for testing */
+  var symbol = Symbol();
+  var alphabet = 'abcdefghijklmnopqrst';
+  A[symbol] = 7;
+  alphabet.split('').forEach(function (chr) { B[chr] = chr; });
+  return nativeAssign({}, A)[symbol] != 7 || objectKeys(nativeAssign({}, B)).join('') != alphabet;
+}) ? function assign(target, source) { // eslint-disable-line no-unused-vars -- required for `.length`
+  var T = toObject(target);
+  var argumentsLength = arguments.length;
+  var index = 1;
+  var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
+  var propertyIsEnumerable = propertyIsEnumerableModule.f;
+  while (argumentsLength > index) {
+    var S = IndexedObject(arguments[index++]);
+    var keys = getOwnPropertySymbols ? objectKeys(S).concat(getOwnPropertySymbols(S)) : objectKeys(S);
+    var length = keys.length;
+    var j = 0;
+    var key;
+    while (length > j) {
+      key = keys[j++];
+      if (!DESCRIPTORS || propertyIsEnumerable.call(S, key)) T[key] = S[key];
+    }
+  } return T;
+} : nativeAssign;
 
 
 /***/ }),
@@ -3042,6 +3222,13 @@ module.exports = function (S, index, unicode) {
 
 /***/ }),
 
+/***/ "8bbf":
+/***/ (function(module, exports) {
+
+module.exports = require("vue");
+
+/***/ }),
+
 /***/ "90e3":
 /***/ (function(module, exports) {
 
@@ -3699,66 +3886,6 @@ module.exports = function (argument) {
 
 /***/ }),
 
-/***/ "a707":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var mousetrap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("8a60");
-/* harmony import */ var mousetrap__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(mousetrap__WEBPACK_IMPORTED_MODULE_0__);
-// Since Mousetrap's plugins aren't npm ready, this just adds the global bind
- // copied directly from https://raw.githubusercontent.com/ccampbell/mousetrap/master/plugins/global-bind/mousetrap-global-bind.js
-
-/**
- * adds a bindGlobal method to Mousetrap that allows you to
- * bind specific keyboard shortcuts that will still work
- * inside a text input field
- *
- * usage:
- * Mousetrap.bindGlobal('ctrl+s', _saveChanges);
- */
-
-(function (Mousetrap) {
-  if (!Mousetrap) {
-    return;
-  }
-
-  var _globalCallbacks = {};
-  var _originalStopCallback = Mousetrap.prototype.stopCallback;
-
-  Mousetrap.prototype.stopCallback = function (e, element, combo, sequence) {
-    var self = this;
-
-    if (self.paused) {
-      return true;
-    }
-
-    if (_globalCallbacks[combo] || _globalCallbacks[sequence]) {
-      return false;
-    }
-
-    return _originalStopCallback.call(self, e, element, combo);
-  };
-
-  Mousetrap.prototype.bindGlobal = function (keys, callback, action) {
-    var self = this;
-    self.bind(keys, callback, action);
-
-    if (keys instanceof Array) {
-      for (var i = 0; i < keys.length; i++) {
-        _globalCallbacks[keys[i]] = true;
-      }
-
-      return;
-    }
-
-    _globalCallbacks[keys] = true;
-  };
-
-  Mousetrap.init();
-})(typeof mousetrap__WEBPACK_IMPORTED_MODULE_0___default.a !== "undefined" ? mousetrap__WEBPACK_IMPORTED_MODULE_0___default.a : undefined);
-
-/***/ }),
-
 /***/ "ab13":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3818,34 +3945,6 @@ module.exports = function () {
   if (that.sticky) result += 'y';
   return result;
 };
-
-
-/***/ }),
-
-/***/ "ade3":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, "a", function() { return /* reexport */ _defineProperty; });
-
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/defineProperty/_index.mjs
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 
 
 /***/ }),
@@ -3972,119 +4071,24 @@ module.exports = function (name) {
 
 /***/ }),
 
-/***/ "b635":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ "b64b":
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony import */ var _home_chriscauley_projects_unrest_vue_mousetrap_node_modules_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("3835");
-/* harmony import */ var _home_chriscauley_projects_unrest_vue_mousetrap_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ade3");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("159b");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_object_entries_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("4fad");
-/* harmony import */ var core_js_modules_es_object_entries_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_entries_js__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("caad");
-/* harmony import */ var core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes_js__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("2532");
-/* harmony import */ var core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes_js__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("d81d");
-/* harmony import */ var core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_map_js__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("1276");
-/* harmony import */ var core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split_js__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("ac1f");
-/* harmony import */ var core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec_js__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("498a");
-/* harmony import */ var core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim_js__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_string_repeat_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("38cf");
-/* harmony import */ var core_js_modules_es_string_repeat_js__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_repeat_js__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var mousetrap__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("8a60");
-/* harmony import */ var mousetrap__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(mousetrap__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _globalBind__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("a707");
+var $ = __webpack_require__("23e7");
+var toObject = __webpack_require__("7b0b");
+var nativeKeys = __webpack_require__("df75");
+var fails = __webpack_require__("d039");
 
+var FAILS_ON_PRIMITIVES = fails(function () { nativeKeys(1); });
 
+// `Object.keys` method
+// https://tc39.es/ecma262/#sec-object.keys
+$({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
+  keys: function keys(it) {
+    return nativeKeys(toObject(it));
+  }
+});
 
-
-
-
-
-
-
-
-
-
-
-
-var config = function config(_ref) {
-  var _ref$namespace = _ref.namespace,
-      namespace = _ref$namespace === void 0 ? "mousetrap" : _ref$namespace,
-      _ref$delimiter = _ref.delimiter,
-      delimiter = _ref$delimiter === void 0 ? "," : _ref$delimiter,
-      local = _ref.local;
-  return {
-    watch: Object(_home_chriscauley_projects_unrest_vue_mousetrap_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])({}, namespace, "_sync" + namespace),
-    mounted: function mounted() {
-      this["_sync" + namespace]();
-    },
-    unmount: function unmount() {
-      this["__".concat(namespace)].reset();
-    },
-    methods: Object(_home_chriscauley_projects_unrest_vue_mousetrap_node_modules_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])({}, "_sync" + namespace, function () {
-      var _this$;
-
-      (_this$ = this["__".concat(namespace)]) === null || _this$ === void 0 ? void 0 : _this$.reset();
-      var element = local ? this.$el : document.body;
-      var mousetrap = this["__".concat(namespace)] = new mousetrap__WEBPACK_IMPORTED_MODULE_11___default.a(element);
-      Object.entries(this[namespace]).forEach(function (_ref2) {
-        var _ref3 = Object(_home_chriscauley_projects_unrest_vue_mousetrap_node_modules_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(_ref2, 2),
-            key = _ref3[0],
-            options = _ref3[1];
-
-        if (key.includes(delimiter)) {
-          key = key.split(delimiter).map(function (s) {
-            return s.trim();
-          });
-        }
-
-        if (typeof options === "function") {
-          options = {
-            keydown: options
-          };
-        }
-
-        var bind = function bind() {
-          return global ? mousetrap.bindGlobal.apply(mousetrap, arguments) : mousetrap.bind.apply(mousetrap, arguments);
-        };
-
-        if (options.repeat && !options.keydown) {
-          options.keydown = options.repeat;
-        }
-
-        var _options = options,
-            repeat = _options.repeat,
-            keydown = _options.keydown,
-            keyup = _options.keyup,
-            keypress = _options.keypress;
-
-        if (repeat) {
-          bind(key, function (e) {
-            return e.repeat ? repeat(e) : keydown(e);
-          });
-        } else if (keydown) {
-          bind(key, function (e) {
-            return !e.repeat && keydown(e);
-          });
-        }
-
-        keyup && bind(key, keyup, "keyup");
-        keypress && bind(key, keypress, "keypress");
-      });
-    })
-  };
-};
-
-var Mixin = config({});
-Mixin.config = config;
-/* harmony default export */ __webpack_exports__["a"] = (Mixin);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__("c8ba")))
 
 /***/ }),
 
@@ -4328,6 +4332,21 @@ var EXISTS = isObject(document) && isObject(document.createElement);
 module.exports = function (it) {
   return EXISTS ? document.createElement(it) : {};
 };
+
+
+/***/ }),
+
+/***/ "cca6":
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__("23e7");
+var assign = __webpack_require__("60da");
+
+// `Object.assign` method
+// https://tc39.es/ecma262/#sec-object.assign
+$({ target: 'Object', stat: true, forced: Object.assign !== assign }, {
+  assign: assign
+});
 
 
 /***/ }),
@@ -5018,13 +5037,448 @@ if (typeof window !== 'undefined') {
 // Indicate to webpack that this file can be concatenated
 /* harmony default export */ var setPublicPath = (null);
 
-// EXTERNAL MODULE: ./src/index.js
-var src_0 = __webpack_require__("b635");
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/defineProperty/_index.mjs
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
+  return obj;
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/arrayWithHoles/index.js
+var arrayWithHoles = __webpack_require__("82ea");
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/iterableToArrayLimit/index.js
+var iterableToArrayLimit = __webpack_require__("3393");
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/unsupportedIterableToArray/index.js
+var unsupportedIterableToArray = __webpack_require__("a3f3");
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/nonIterableRest/index.js
+var nonIterableRest = __webpack_require__("7e0a");
+
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/slicedToArray/_index.mjs
+
+
+
+
+function _slicedToArray(arr, i) {
+  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || unsupportedIterableToArray(arr, i) || nonIterableRest();
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.for-each.js
+var web_dom_collections_for_each = __webpack_require__("159b");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.entries.js
+var es_object_entries = __webpack_require__("4fad");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.to-string.js
+var es_object_to_string = __webpack_require__("d3b7");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.iterator.js
+var es_array_iterator = __webpack_require__("e260");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/web.dom-collections.iterator.js
+var web_dom_collections_iterator = __webpack_require__("ddb0");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.includes.js
+var es_array_includes = __webpack_require__("caad");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.includes.js
+var es_string_includes = __webpack_require__("2532");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.array.map.js
+var es_array_map = __webpack_require__("d81d");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.split.js
+var es_string_split = __webpack_require__("1276");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.regexp.exec.js
+var es_regexp_exec = __webpack_require__("ac1f");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.trim.js
+var es_string_trim = __webpack_require__("498a");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.repeat.js
+var es_string_repeat = __webpack_require__("38cf");
+
+// EXTERNAL MODULE: ./node_modules/mousetrap/mousetrap.js
+var mousetrap_mousetrap = __webpack_require__("8a60");
+var mousetrap_default = /*#__PURE__*/__webpack_require__.n(mousetrap_mousetrap);
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.string.replace.js
+var es_string_replace = __webpack_require__("5319");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.function.name.js
+var es_function_name = __webpack_require__("b0c0");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.assign.js
+var es_object_assign = __webpack_require__("cca6");
+
+// CONCATENATED MODULE: ./src/register.js
+
+
+
+
+
+
+
+
+
+
+
+var actionBySlug = {};
+var groupBySlug = {};
+
+var unslugify = function unslugify(s) {
+  return s.replace(/[A-Z]/g, function (l) {
+    return " ".concat(l.toLowerCase());
+  }).replace(/-_/g, " ").replace(/^./, function (l) {
+    return l.toUpperCase();
+  });
+};
+
+var isMac = function isMac() {
+  var regexp = /Mac|iPod|iPhone|iPad/;
+  return typeof window != "undefined" && regexp.test(window.navigator.platform);
+};
+
+var normalizeDisplay = function normalizeDisplay(s) {
+  s = s.split(",")[0]; // only show first hotkey
+
+  s = s.replace("mod", isMac() ? "cmd" : "ctrl");
+  return s;
+};
+
+var shortDisplay = function shortDisplay(display) {
+  return display.replace(/shift ?\+ ?/gi, "⇧").replace(/meta ?\+ ?/gi, "⌘").replace(/control ?\+ ?/gi, "^");
+};
+
+var register_register = function register() {
+  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
+
+  if (args.length === 1) {
+    // register({...actions}) will assign actions to empty group
+    register("", args[0]);
+    return;
+  }
+
+  var group_slug = args[0],
+      action_map = args[1];
+
+  if (!groupBySlug[group_slug]) {
+    groupBySlug[group_slug] = {
+      slug: group_slug,
+      name: unslugify(group_slug),
+      actions: []
+    };
+  }
+
+  var group = groupBySlug[group_slug];
+  Object.entries(action_map).forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+        slug = _ref2[0],
+        action = _ref2[1];
+
+    if (typeof action === "string") {
+      // shortcut: save: 'ctrl+s' => save: { keys: 'ctrl+s' }
+      action = {
+        keys: action
+      };
+    } // add sensible defaults for missing action props
+
+
+    action.name = action.name || unslugify(slug);
+    action.display = action.display || normalizeDisplay(action.keys);
+    action.short_display = action.short_display || shortDisplay(action.display); // action is accessible both on registry && registry.groupBySlug
+
+    actionBySlug[slug] = action;
+    group.actions.push(action);
+  });
+};
+
+Object.assign(register_register, {
+  actionBySlug: actionBySlug,
+  groupBySlug: groupBySlug
+});
+/* harmony default export */ var src_register = (register_register);
+// CONCATENATED MODULE: ./src/globalBind.js
+// Since Mousetrap's plugins aren't npm ready, this just adds the global bind
+ // copied directly from https://raw.githubusercontent.com/ccampbell/mousetrap/master/plugins/global-bind/mousetrap-global-bind.js
+
+/**
+ * adds a bindGlobal method to Mousetrap that allows you to
+ * bind specific keyboard shortcuts that will still work
+ * inside a text input field
+ *
+ * usage:
+ * Mousetrap.bindGlobal('ctrl+s', _saveChanges);
+ */
+
+(function (Mousetrap) {
+  if (!Mousetrap) {
+    return;
+  }
+
+  var _globalCallbacks = {};
+  var _originalStopCallback = Mousetrap.prototype.stopCallback;
+
+  Mousetrap.prototype.stopCallback = function (e, element, combo, sequence) {
+    var self = this;
+
+    if (self.paused) {
+      return true;
+    }
+
+    if (_globalCallbacks[combo] || _globalCallbacks[sequence]) {
+      return false;
+    }
+
+    return _originalStopCallback.call(self, e, element, combo);
+  };
+
+  Mousetrap.prototype.bindGlobal = function (keys, callback, action) {
+    var self = this;
+    self.bind(keys, callback, action);
+
+    if (keys instanceof Array) {
+      for (var i = 0; i < keys.length; i++) {
+        _globalCallbacks[keys[i]] = true;
+      }
+
+      return;
+    }
+
+    _globalCallbacks[keys] = true;
+  };
+
+  Mousetrap.init();
+})(typeof mousetrap_default.a !== "undefined" ? mousetrap_default.a : undefined);
+// CONCATENATED MODULE: ./src/bindActionMap.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* harmony default export */ var bindActionMap = (function (action_map, _ref) {
+  var element = _ref.element,
+      _ref$delimiter = _ref.delimiter,
+      delimiter = _ref$delimiter === void 0 ? "," : _ref$delimiter;
+  var mousetrap = new mousetrap_default.a(element);
+  Object.entries(action_map).forEach(function (_ref2) {
+    var _ref3 = _slicedToArray(_ref2, 2),
+        key = _ref3[0],
+        options = _ref3[1];
+
+    if (src_register.actionBySlug[key]) {
+      // action is registered as an alias in global registry (key was a slug)
+      key = src_register.actionBySlug[key].keys;
+    }
+
+    if (key.includes(delimiter)) {
+      key = key.split(delimiter).map(function (s) {
+        return s.trim();
+      });
+    }
+
+    if (typeof options === "function") {
+      options = {
+        keydown: options
+      };
+    }
+
+    if (options.repeat && !options.keydown) {
+      options.keydown = options.repeat;
+    }
+
+    var _options = options,
+        repeat = _options.repeat,
+        keydown = _options.keydown,
+        keyup = _options.keyup,
+        keypress = _options.keypress,
+        global = _options.global;
+
+    var bind = function bind() {
+      return global ? mousetrap.bindGlobal.apply(mousetrap, arguments) : mousetrap.bind.apply(mousetrap, arguments);
+    };
+
+    if (repeat) {
+      bind(key, function (e) {
+        return e.repeat ? repeat(e) : keydown(e);
+      });
+    } else if (keydown) {
+      bind(key, function (e) {
+        return !e.repeat && keydown(e);
+      });
+    }
+
+    keyup && bind(key, keyup, "keyup");
+    keypress && bind(key, keypress, "keypress");
+  });
+  return mousetrap;
+});
+// CONCATENATED MODULE: ./src/Mixin.js
+
+
+
+var Mixin_config = function config(_ref) {
+  var _ref$namespace = _ref.namespace,
+      namespace = _ref$namespace === void 0 ? "mousetrap" : _ref$namespace,
+      _ref$delimiter = _ref.delimiter,
+      delimiter = _ref$delimiter === void 0 ? "," : _ref$delimiter,
+      local = _ref.local;
+  return {
+    watch: _defineProperty({}, namespace, "_sync" + namespace),
+    mounted: function mounted() {
+      this["_sync" + namespace]();
+    },
+    unmounted: function unmounted() {
+      this["__".concat(namespace)].reset();
+    },
+    methods: _defineProperty({}, "_sync" + namespace, function () {
+      var _this$;
+
+      (_this$ = this["__".concat(namespace)]) === null || _this$ === void 0 ? void 0 : _this$.reset();
+      var element = local ? this.$el : document.body;
+      this["__".concat(namespace)] = bindActionMap(this[namespace], {
+        element: element,
+        delimiter: delimiter
+      });
+    })
+  };
+};
+
+var Mixin = Mixin_config({});
+Mixin.config = Mixin_config;
+/* harmony default export */ var src_Mixin = (Mixin);
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.symbol.js
+var es_symbol = __webpack_require__("a4d3");
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.symbol.description.js
+var es_symbol_description = __webpack_require__("e01a");
+
+// EXTERNAL MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
+var external_commonjs_vue_commonjs2_vue_root_Vue_ = __webpack_require__("8bbf");
+
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/vue-loader-v16/dist/templateLoader.js??ref--6!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader-v16/dist??ref--0-1!./src/Modal.vue?vue&type=template&id=6933da09
+
+
+
+
+var _hoisted_1 = {
+  class: "modal"
+};
+var _hoisted_2 = {
+  class: "modal-content"
+};
+
+var _hoisted_3 = /*#__PURE__*/Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createVNode"])("h3", null, "Keyboard Shortcuts", -1);
+
+var _hoisted_4 = {
+  key: 0
+};
+var _hoisted_5 = {
+  class: "table"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return Object(external_commonjs_vue_commonjs2_vue_root_Vue_["openBlock"])(), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createBlock"])("div", _hoisted_1, [Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createVNode"])("div", {
+    class: "modal-mask",
+    onClick: _cache[1] || (_cache[1] = function ($event) {
+      return _ctx.$emit('close');
+    })
+  }), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createVNode"])("div", _hoisted_2, [_hoisted_3, Object(external_commonjs_vue_commonjs2_vue_root_Vue_["renderSlot"])(_ctx.$slots, "default"), (Object(external_commonjs_vue_commonjs2_vue_root_Vue_["openBlock"])(true), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createBlock"])(external_commonjs_vue_commonjs2_vue_root_Vue_["Fragment"], null, Object(external_commonjs_vue_commonjs2_vue_root_Vue_["renderList"])($options.groups, function (group) {
+    return Object(external_commonjs_vue_commonjs2_vue_root_Vue_["openBlock"])(), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createBlock"])("div", {
+      key: group.slug
+    }, [group.name ? (Object(external_commonjs_vue_commonjs2_vue_root_Vue_["openBlock"])(), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createBlock"])("h4", _hoisted_4, Object(external_commonjs_vue_commonjs2_vue_root_Vue_["toDisplayString"])(group.name), 1)) : Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createCommentVNode"])("", true), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createVNode"])("table", _hoisted_5, [Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createVNode"])("tbody", null, [(Object(external_commonjs_vue_commonjs2_vue_root_Vue_["openBlock"])(true), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createBlock"])(external_commonjs_vue_commonjs2_vue_root_Vue_["Fragment"], null, Object(external_commonjs_vue_commonjs2_vue_root_Vue_["renderList"])(group.actions, function (action) {
+      return Object(external_commonjs_vue_commonjs2_vue_root_Vue_["openBlock"])(), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createBlock"])("tr", {
+        key: action.slug
+      }, [Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createVNode"])("td", null, [Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createTextVNode"])(Object(external_commonjs_vue_commonjs2_vue_root_Vue_["toDisplayString"])(action.name) + " ", 1), action.description ? (Object(external_commonjs_vue_commonjs2_vue_root_Vue_["openBlock"])(), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createBlock"])("span", {
+        key: 0,
+        title: action.description
+      }, " ❓ ", 8, ["title"])) : Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createCommentVNode"])("", true)]), Object(external_commonjs_vue_commonjs2_vue_root_Vue_["createVNode"])("td", null, Object(external_commonjs_vue_commonjs2_vue_root_Vue_["toDisplayString"])(action.display), 1)]);
+    }), 128))])])]);
+  }), 128))])]);
+}
+// CONCATENATED MODULE: ./src/Modal.vue?vue&type=template&id=6933da09
+
+// EXTERNAL MODULE: ./node_modules/core-js/modules/es.object.keys.js
+var es_object_keys = __webpack_require__("b64b");
+
+// CONCATENATED MODULE: ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/thread-loader/dist/cjs.js!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader-v16/dist??ref--0-1!./src/Modal.vue?vue&type=script&lang=js
+
+
+
+
+/* harmony default export */ var Modalvue_type_script_lang_js = ({
+  mixins: [src_Mixin],
+  props: {
+    group_slugs: Array
+  },
+  emits: ["close"],
+  computed: {
+    groups: function groups() {
+      var _this$group_slugs = this.group_slugs,
+          group_slugs = _this$group_slugs === void 0 ? Object.keys(src_register.groupBySlug) : _this$group_slugs;
+      return group_slugs.map(function (s) {
+        return src_register.groupBySlug[s];
+      });
+    },
+    mousetrap: function mousetrap() {
+      var _this = this;
+
+      return {
+        "esc,?": function esc() {
+          return _this.$emit("close");
+        }
+      };
+    }
+  }
+});
+// CONCATENATED MODULE: ./src/Modal.vue?vue&type=script&lang=js
+ 
+// CONCATENATED MODULE: ./src/Modal.vue
+
+
+
+Modalvue_type_script_lang_js.render = render
+
+/* harmony default export */ var Modal = (Modalvue_type_script_lang_js);
+// CONCATENATED MODULE: ./src/index.js
+
+
+
+/* harmony default export */ var src_0 = ({
+  Mixin: src_Mixin,
+  Modal: Modal,
+  register: src_register
+});
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib.js
 
 
-/* harmony default export */ var entry_lib = __webpack_exports__["default"] = (src_0["a" /* default */]);
+/* harmony default export */ var entry_lib = __webpack_exports__["default"] = (src_0);
 
 
 

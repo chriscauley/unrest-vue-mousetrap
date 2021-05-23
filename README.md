@@ -8,10 +8,10 @@ Use the default import from this package and add a mousetrap computed property t
 
 ``` javascript
 <script>
-import MousetrapMixin from '@unrest/vue-mousetrap'
+import Mousetrap from '@unrest/vue-mousetrap'
 
 export default {
-  mixins: [MousetrapMixin],
+  mixins: [Mousetrap.Mixin],
   computed: {
     mousetrap() {
       if (this.paused) { // 1
