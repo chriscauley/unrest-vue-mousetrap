@@ -18,7 +18,7 @@
 const tabs = [
   ["/", "Basics"],
   ["/mousetrap", "Mousetrap"],
-  ["/help-modal", "Help Modal"]
+  // ["/help-modal", "Help Modal"]
 ];
 
 export default {

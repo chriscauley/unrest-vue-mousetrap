@@ -50,7 +50,6 @@ export default {
 </script>
 
 <template>
-  <!-- Here is the html. I put the <template> tag at the bottom to keep the code above the fold ¯\_(ツ)_/¯ -->
   <p class="text-xl text-center">
     Press enter to get started.
   </p>
