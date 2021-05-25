@@ -1,6 +1,6 @@
 <script>
 import Mousetrap from "@ur/vue-mousetrap";
-import code from "raw-loader!./demos/HelpModal.txt";
+import code from "raw-loader!./raw/HelpModal.txt";
 
 Mousetrap.register({
   open: "mod+o", // string yields no overrides

@@ -1,6 +1,6 @@
 <script>
 import Mousetrap from "@ur/vue-mousetrap";
-import code from "raw-loader!./demos/Basics.txt";
+import code from "raw-loader!./raw/Basics.txt";
 
 export default {
   mixins: [Mousetrap.Mixin],
@@ -51,18 +51,20 @@ export default {
 
 <template>
   <p class="text-xl text-center">
-    Press enter to get started.
+    Press <code>enter</code> to get started.
   </p>
   <div v-if="show_welcome" class="modal">
     <div class="modal-mask" />
     <div class="modal-content" style="width: 350px">
       <h2>Welcome!</h2>
       <p>
-        The lines are highlighted in the source code when they are executed. The
-        left column tells how many times that line has been triggered.
+        When you press a hotkey, the lines in the source code are highlighted. The left column tells how many times that line has been triggered.
       </p>
       <p>
-        Press "enter" again and then scroll down to see more hotkey examples.
+        While this welcome message is open, all hotkeys other than <code>enter</code> are disabled.
+      </p>
+      <p>
+        Press <code>enter</code> again and then scroll down to see more hotkey examples.
       </p>
     </div>
   </div>
