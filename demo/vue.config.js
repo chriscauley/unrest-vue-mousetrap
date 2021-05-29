@@ -12,12 +12,12 @@ module.exports = {
   configureWebpack: {
     resolve: {
       alias: {
-        "@ur/vue-mousetrap": path.resolve(__dirname, "../src/index.js")
+        "@unrest/vue-mousetrap": path.resolve(__dirname, "../src/index.js")
       }
     }
   }
 };
 
 if (process.env.NODE_ENV === "production") {
-  module.exports.publicPath = "/ur-vue-mousetrap";
+  module.exports.publicPath = "/unrest-vue-mousetrap";
 }

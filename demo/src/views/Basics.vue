@@ -1,5 +1,5 @@
 <script>
-import Mousetrap from "@ur/vue-mousetrap";
+import Mousetrap from "@unrest/vue-mousetrap";
 import code from "raw-loader!./raw/Basics.txt";
 
 export default {

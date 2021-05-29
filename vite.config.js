@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/index.js"),
-      name: "@ur/vue-mousetrap"
+      name: "@unrest/vue-mousetrap"
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

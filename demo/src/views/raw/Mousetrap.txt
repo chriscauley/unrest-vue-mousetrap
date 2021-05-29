@@ -1,5 +1,5 @@
 <script>
-import Mousetrap from "@ur/vue-mousetrap";
+import Mousetrap from "@unrest/vue-mousetrap";
 import code from "raw-loader!./raw/Mousetrap.txt";
 
 export default {
@@ -11,29 +11,30 @@ export default {
     mousetrap() {
       return {
         // single keys
-        4: () => (this.highlighted = [18]),
+        4: () => (this.highlighted = [14]),
         x: {
-          keyup: () => (this.highlighted = [20])
+          // key up only
+          keyup: () => (this.highlighted = [17])
         },
 
         // combinations (mod = ctrl or command)
         "mod+shift+k": () => {
-          this.highlighted = [24, 25, 26, 27];
+          this.highlighted = [21, 22, 23, 24];
           return false;
         },
 
         "command+k,ctrl+k": () => {
-          this.highlighted = [29, 30, 31, 32];
+          this.highlighted = [26, 27, 28, 29];
           return false;
         },
 
         // gmail style sequences
-        "g i": () => (this.highlighted = [35]),
-        "* a": () => (this.highlighted = [36]),
+        "g i": () => (this.highlighted = [32]),
+        "* a": () => (this.highlighted = [33]),
 
         // konami code!
         "up up down down left right left right b a enter": () => {
-          this.highlighted = [39, 40, 41, 42];
+          this.highlighted = [36, 37, 38];
         }
       };
     }
