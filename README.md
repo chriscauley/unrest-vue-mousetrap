@@ -2,6 +2,10 @@
 
 This provides an easy way to add keyboard shortcuts to any vue component. Why not start with the [interactive demo with code examples](https://chriscauley.github.io/unrest-vue-mousetrap)? This package is a wrapper around (mousetrap)[https://craig.is/killing/mice] so additional information (key aliases, etc) can be found there.
 
+## Installation
+
+`npm install --save @unrest/vue-mousetrap` should install this package from npm. If that doesn't work for you or if there's another distribution method you'd prefer please open an issue on github.
+
 ## Basic Usage
 
 Use the default import from this package and add a mousetrap computed property to a component to enable shortcuts. `component.mousetrap` should return an object with a shortcut string as the key and an action or action object as the value.
