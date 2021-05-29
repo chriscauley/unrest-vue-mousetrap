@@ -49,5 +49,5 @@ export default {
     this package is just a wrapper around mousetrap, please refer to the
     mousetrap docs for more information on how to construct key codes.
   </p>
-  <highlighter :lines="highlighted" :code="code" />
+  <highlighter :lines="highlighted" :code="code" label="Mousetrap.vue" />
 </template>

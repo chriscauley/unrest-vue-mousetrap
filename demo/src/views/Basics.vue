@@ -68,5 +68,5 @@ export default {
       </p>
     </div>
   </div>
-  <highlighter :lines="highlighted" :code="code" />
+  <highlighter :lines="highlighted" :code="code" label="Basics.vue" />
 </template>

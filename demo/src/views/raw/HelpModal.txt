@@ -75,5 +75,5 @@ export default {
       </p>
     </div>
   </mousetrap-modal>
-  <highlighter :lines="highlighted" :code="code" />
+  <highlighter :lines="highlighted" :code="code" :label="HelpModal.vue" />
 </template>

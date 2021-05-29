@@ -1,6 +1,6 @@
 <template>
   <div class="code-wrapper">
-    <ssh-pre language="js" :data-line="5">{{ code }}</ssh-pre>
+    <ssh-pre language="js" :label="label">{{ code }}</ssh-pre>
     <div class="lines">
       <div v-for="(_, i) in code.split('\n')" :key="i" :class="css(i)">
         {{ counts[i] }}
@@ -13,7 +13,8 @@
 export default {
   props: {
     code: String,
-    lines: Array
+    lines: Array,
+    label: String,
   },
   data() {
     return { counts: {}, fade: false, lines0: [] };
