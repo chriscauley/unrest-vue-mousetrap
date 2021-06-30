@@ -1078,6 +1078,18 @@
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
 
+"@unrest/eslint-config@^0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@unrest/eslint-config/-/eslint-config-0.0.4.tgz#c4a2d0c492884eba0cc189fb0b024a76f1cbca45"
+  integrity sha512-8shKwIh4P+3fyywpfPrIPkWZ2MLpTR2OTIDN7ePLAP09FUHH7iYWtMwqW7uwcOieh3IDDSu2lNFyUknQM6RdZA==
+  dependencies:
+    babel-eslint "^10.1.0"
+    eslint "^6.7.2"
+    eslint-config-prettier "^8.1.0"
+    eslint-plugin-prettier "^3.3.1"
+    eslint-plugin-vue "^7.0.0-0"
+    prettier "^1.18.2"
+
 "@unrest/tailwind@^0.0.9":
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/@unrest/tailwind/-/tailwind-0.0.9.tgz#79cfa222b4521cf4842e52bb0381797666fffe75"
@@ -3448,7 +3460,7 @@ escape-string-regexp@^1.0.5:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
 
-eslint-config-prettier@^8.3.0:
+eslint-config-prettier@^8.1.0, eslint-config-prettier@^8.3.0:
   version "8.3.0"
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.3.0.tgz#f7471b20b6fe8a9a9254cc684454202886a2dd7a"
   integrity sha512-BgZuLUSeKzvlL/VUjx/Yb787VQ26RU3gGjA3iiFvdsp/2bMfVIWUVP7tjxtjS0e+HP409cPlPvNkQloz8C91ew==
@@ -3464,7 +3476,7 @@ eslint-loader@^2.2.1:
     object-hash "^1.1.4"
     rimraf "^2.6.1"
 
-eslint-plugin-prettier@^3.4.0:
+eslint-plugin-prettier@^3.3.1, eslint-plugin-prettier@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.4.0.tgz#cdbad3bf1dbd2b177e9825737fe63b476a08f0c7"
   integrity sha512-UDK6rJT6INSfcOo545jiaOwB701uAIt2/dR7WnFQoGCVl1/EMqdANBmwUaqqQ45aXprsTGzSa39LI1PyuRBxxw==

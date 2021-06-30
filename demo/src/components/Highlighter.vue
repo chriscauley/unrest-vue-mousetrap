@@ -17,26 +17,26 @@ export default {
     label: String,
   },
   data() {
-    return { counts: {}, fade: false, lines0: [] };
+    return { counts: {}, fade: false, lines0: [] }
   },
   watch: {
     lines() {
-      this.lines0 = this.lines.map(i => i - 1);
-      this.fade = false;
-      this.lines0.forEach(i => (this.counts[i] = (this.counts[i] || 0) + 1));
-      setTimeout(() => (this.fade = true), 0);
-    }
+      this.lines0 = this.lines.map((i) => i - 1)
+      this.fade = false
+      this.lines0.forEach((i) => (this.counts[i] = (this.counts[i] || 0) + 1))
+      setTimeout(() => (this.fade = true), 0)
+    },
   },
   methods: {
     css(i) {
       return [
-        "line",
-        { "bg-blue-300": !this.fade && this.lines0.includes(i) },
-        { "bg-gray-400": this.fade && this.lines0.includes(i) }
-      ];
-    }
-  }
-};
+        'line',
+        { 'bg-blue-300': !this.fade && this.lines0.includes(i) },
+        { 'bg-gray-400': this.fade && this.lines0.includes(i) },
+      ]
+    },
+  },
+}
 </script>
 
 <style lang="scss">

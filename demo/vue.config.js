@@ -1,10 +1,10 @@
-const path = require("path");
+const path = require('path')
 
 const devServer = {
-  host: "mousetrap.localhost",
+  host: 'mousetrap.localhost',
   port: 8200,
-  historyApiFallback: true
-};
+  historyApiFallback: true,
+}
 
 module.exports = {
   lintOnSave: false,
@@ -12,12 +12,12 @@ module.exports = {
   configureWebpack: {
     resolve: {
       alias: {
-        "@unrest/vue-mousetrap": path.resolve(__dirname, "../src/index.js")
-      }
-    }
-  }
-};
+        '@unrest/vue-mousetrap': path.resolve(__dirname, '../src/index.js'),
+      },
+    },
+  },
+}
 
-if (process.env.NODE_ENV === "production") {
-  module.exports.publicPath = "/unrest-vue-mousetrap";
+if (process.env.NODE_ENV === 'production') {
+  module.exports.publicPath = '/unrest-vue-mousetrap'
 }

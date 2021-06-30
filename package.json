@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "vite build",
-    "lint": "eslint src/* src/**/*"
+    "lint": "eslint \"src/**/*\""
   },
   "peerDependencies": {
     "vue": "^3.0.0"

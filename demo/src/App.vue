@@ -24,26 +24,23 @@
 
 <script>
 const tabs = [
-  ["/", "Basics"],
-  ["/mousetrap", "Mousetrap"],
+  ['/', 'Basics'],
+  ['/mousetrap', 'Mousetrap'],
   // ["/help-modal", "Help Modal"]
-];
+]
 
 export default {
   data() {
-    return { tabs };
+    return { tabs }
   },
   computed: {
     css() {
       return {
-        tab: ([path]) => [
-          "btn",
-          path === this.$route.path ? "-primary" : "-light"
-        ]
-      };
-    }
-  }
-};
+        tab: ([path]) => ['btn', path === this.$route.path ? '-primary' : '-light'],
+      }
+    },
+  },
+}
 </script>
 
 <style>
