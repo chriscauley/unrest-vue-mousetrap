@@ -1,26 +1,26 @@
-import bindActionMap from "./bindActionMap";
+import bindActionMap from './bindActionMap'
 
-const config = ({ namespace = "mousetrap", delimiter = ",", local }) => ({
-  watch: { [namespace]: "_sync" + namespace },
+const config = ({ namespace = 'mousetrap', delimiter = ',', local }) => ({
+  watch: { [namespace]: '_sync' + namespace },
   mounted() {
-    this["_sync" + namespace]();
+    this['_sync' + namespace]()
   },
   unmounted() {
-    this[`__${namespace}`].reset();
+    this[`__${namespace}`].reset()
   },
   methods: {
-    ["_sync" + namespace]() {
-      this[`__${namespace}`]?.reset();
-      const element = local ? this.$el : document.body;
+    ['_sync' + namespace]() {
+      this[`__${namespace}`]?.reset()
+      const element = local ? this.$el : document.body
       this[`__${namespace}`] = bindActionMap(this[namespace], {
         element,
-        delimiter
-      });
-    }
-  }
-});
+        delimiter,
+      })
+    },
+  },
+})
 
-const Mixin = config({});
-Mixin.config = config;
+const Mixin = config({})
+Mixin.config = config
 
-export default Mixin;
+export default Mixin

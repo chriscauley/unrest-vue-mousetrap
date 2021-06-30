@@ -25,23 +25,23 @@
 </template>
 
 <script>
-import register from "./register";
-import Mixin from "./Mixin";
+import register from './register'
+import Mixin from './Mixin'
 
 export default {
   mixins: [Mixin],
   props: {
-    group_slugs: Array
+    group_slugs: Array,
   },
-  emits: ["close"],
+  emits: ['close'],
   computed: {
     groups() {
-      const { group_slugs = Object.keys(register.groupBySlug) } = this;
-      return group_slugs.map(s => register.groupBySlug[s]);
+      const { group_slugs = Object.keys(register.groupBySlug) } = this
+      return group_slugs.map((s) => register.groupBySlug[s])
     },
     mousetrap() {
-      return { "esc,?": () => this.$emit("close") };
-    }
-  }
-};
+      return { 'esc,?': () => this.$emit('close') }
+    },
+  },
+}
 </script>
