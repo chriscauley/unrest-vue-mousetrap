@@ -5,7 +5,7 @@ const config = ({ namespace = 'mousetrap', delimiter = ',', local }) => ({
   mounted() {
     this['_sync' + namespace]()
   },
-  unmounted() {
+  beforeUnmount() {
     this[`__${namespace}`].reset()
   },
   methods: {
