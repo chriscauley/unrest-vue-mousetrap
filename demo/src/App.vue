@@ -24,7 +24,8 @@
 
 <script>
 const tabs = [
-  ['/', 'Basics'],
+  ['/', 'Mixin'],
+  ['/composition-api', 'Composition'],
   ['/mousetrap', 'Mousetrap'],
   // ["/help-modal", "Help Modal"]
 ]

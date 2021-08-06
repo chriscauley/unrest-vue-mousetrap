@@ -1,8 +1,8 @@
 #! /usr/bin/env bash
 
 cd src/views
-for NAME in Basics Mousetrap HelpModal;
+for FILENAME in `ls .|grep .vue`
 do
-    echo $NAME.vue raw/$NAME.txt
-    cp $NAME.vue raw/$NAME.txt
+    NAME=`basename $FILENAME .vue`
+    cp $FILENAME raw/$NAME.txt
 done

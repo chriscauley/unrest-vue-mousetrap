@@ -32,7 +32,7 @@ export default {
       return [
         'line',
         { 'bg-blue-300': !this.fade && this.lines0.includes(i) },
-        { 'bg-gray-400': this.fade && this.lines0.includes(i) },
+        { 'bg-gray-200': this.fade && this.lines0.includes(i) },
       ]
     },
   },
