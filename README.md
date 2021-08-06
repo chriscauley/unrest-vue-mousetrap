@@ -1,6 +1,6 @@
 # @unrest/vue-mousetrap
 
-This provides an easy way to add keyboard shortcuts to any vue component via [mixin](#mixin-usage) or [composition api)[composition-api-usage). Why not start with the [interactive demo with code examples](https://chriscauley.github.io/unrest-vue-mousetrap)? This package is a wrapper around (mousetrap)[https://craig.is/killing/mice] so additional information (key aliases, etc) can be found there.
+This provides an easy way to add keyboard shortcuts to any vue component via [mixin](#mixin-usage) or [composition api](#composition-api-usage). Why not start with the [interactive demo with code examples](https://chriscauley.github.io/unrest-vue-mousetrap)? This package is a wrapper around [mousetrap](https://craig.is/killing/mice) so additional information (key aliases, etc) can be found there.
 
 ## Installation
 
@@ -8,7 +8,7 @@ This provides an easy way to add keyboard shortcuts to any vue component via [mi
 
 ## Composition API Usage
 
-```
+``` javascript
 <script>
 import { ref } from 'vue'
 import Mousetrap from '@unrest/vue-mousetrap'
