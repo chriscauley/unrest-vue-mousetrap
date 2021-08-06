@@ -6,6 +6,7 @@ import '@unrest/tailwind/dist.css'
 import App from './App.vue'
 import Highlighter from './components/Highlighter'
 import router from './router'
+import './styles.css'
 
 const app = createApp(App)
 app.component('SshPre', SshPre)
