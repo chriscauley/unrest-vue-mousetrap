@@ -1,0 +1,38 @@
+.modal .modal-content {
+  gap: 0;
+}
+
+.modal .modal-content p:last-child {
+  margin-bottom: 0;
+}
+
+.view-form {
+  display: flex;
+  justify-content: space-around;
+}
+
+.view-form .right {
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.view-form .form-row {
+  margin-bottom: 0.5rem;
+  padding: 0.25rem;
+}
+
+.view-form .form-row label {
+  display: inline-block;
+  width: 70px;
+}
+
+.view-form .form-row input {
+  border: 1px solid;
+  padding: 0.25rem 0.5rem;
+}
+
+.view-form .presets {
+  display: flex;
+  justify-content: space-between;
+}
