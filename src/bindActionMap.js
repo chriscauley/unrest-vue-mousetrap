@@ -3,8 +3,8 @@ import Mousetrap from 'mousetrap'
 import register from './register'
 import './globalBind'
 
-export default (action_map, { element, delimiter = ',' } = {}) => {
-  const mousetrap = new Mousetrap(element)
+export default (action_map, { delimiter = ',' } = {}) => {
+  const mousetrap = new Mousetrap()
   Object.entries(action_map).forEach(([key, options]) => {
     if (register.actionBySlug[key]) {
       // action is registered as an alias in global registry (key was a slug)
