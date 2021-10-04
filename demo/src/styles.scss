@@ -1,0 +1,73 @@
+.modal .modal-content {
+  gap: 0;
+}
+
+.modal .modal-content p:last-child {
+  margin-bottom: 0;
+}
+
+.view-form {
+  display: flex;
+  justify-content: space-around;
+}
+
+.view-form .right {
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.view-form .form-row {
+  margin-bottom: 0.5rem;
+  padding: 0.25rem;
+}
+
+.view-form .form-row label {
+  display: inline-block;
+  width: 70px;
+}
+
+.view-form .form-row input {
+  border: 1px solid;
+  padding: 0.25rem 0.5rem;
+}
+
+.view-form .presets {
+  display: flex;
+  justify-content: space-between;
+}
+
+.code-wrapper {
+  position: relative;
+  .lines {
+    padding: 0.5em;
+    position: absolute;
+    inset: 0;
+    .line {
+      height: 1.5em;
+      transition: 0.25s;
+      &.bg-blue-300 {
+        transition: 0s;
+      }
+    }
+  }
+  .ssh-pre__content span {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* these overrides compensate for me needing to add 1 ssh-pre for each line of code */
+.code-wrapper {
+  background: rgba(0,0,0,.025);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  .ssh-pre {
+    background: none;
+    border: 0;
+    height: 24px;
+    margin: 0;
+    padding: 0 0 0 4rem;
+  }
+}

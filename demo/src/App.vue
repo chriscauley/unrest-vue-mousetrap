@@ -27,7 +27,7 @@ const tabs = [
   ['/', 'Mixin'],
   ['/composition-api', 'Composition'],
   ['/mousetrap', 'Mousetrap'],
-  ['/custom', 'Custom'],
+  // ['/custom', 'Custom'],
 ]
 
 export default {

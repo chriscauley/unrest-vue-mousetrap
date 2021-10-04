@@ -1,6 +1,6 @@
 <template>
   <div class="code-wrapper">
-    <ssh-pre language="js" :label="label">{{ code }}</ssh-pre>
+    <ssh-pre v-for="(line, i) in code.split('\n')" language="js" :key="i">{{ line }}</ssh-pre>
     <div class="lines">
       <div v-for="(_, i) in code.split('\n')" :key="i" :class="css(i)">
         {{ counts[i] }}
@@ -38,28 +38,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss">
-.code-wrapper {
-  position: relative;
-  .lines {
-    padding: 0.5em;
-    position: absolute;
-    inset: 0;
-    .line {
-      height: 1.5em;
-      transition: 0.25s;
-      &.bg-blue-300 {
-        transition: 0s;
-      }
-    }
-  }
-  .ssh-pre__content span {
-    position: relative;
-    z-index: 1;
-  }
-  .ssh-pre {
-    padding-left: 4rem;
-  }
-}
-</style>

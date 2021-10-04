@@ -4,11 +4,13 @@ const devServer = {
   host: 'mousetrap.localhost',
   port: 8200,
   historyApiFallback: true,
+  allowedHosts: ['all'],
 }
 
 module.exports = {
-  lintOnSave: false,
   devServer,
+  lintOnSave: false,
+  publicPath: '/unrest-vue-mousetrap',
   configureWebpack: {
     resolve: {
       alias: {
@@ -16,8 +18,4 @@ module.exports = {
       },
     },
   },
-}
-
-if (process.env.NODE_ENV === 'production') {
-  module.exports.publicPath = '/unrest-vue-mousetrap'
 }

@@ -60,7 +60,8 @@ export default {
         how many times that line has been triggered.
       </p>
       <p>
-        While this welcome message is open, all hotkeys other than <code>enter</code> are disabled.
+        While this welcome message is open, all hotkeys other than
+        <code>enter</code> are disabled.
       </p>
       <p>Press <code>enter</code> again and then scroll down to see more hotkey examples.</p>
     </div>

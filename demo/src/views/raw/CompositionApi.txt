@@ -62,11 +62,14 @@ export default {
         how many times that line has been triggered.
       </p>
       <p>
-        While this welcome message is open, all hotkeys other than <code>enter</code> are disabled.
+        While this welcome message is open, all hotkeys other than
+        <code>enter</code> are disabled.
       </p>
       <p>
-        Note: In this example the first argument of <code>Mousetrap.use(ACTIONS)</code> is a
-        function. This means the hotkeys are rebound any time <code>data.show_welcome</code>
+        Note: In this example the first argument of
+        <code>Mousetrap.use(ACTIONS)</code>
+        is a function. This means the hotkeys are rebound any time
+        <code>data.show_welcome</code>
         changes (since it is a reactive property accesed during the function call).
       </p>
       <p>Press <code>enter</code> again and then scroll down to see more hotkey examples.</p>
