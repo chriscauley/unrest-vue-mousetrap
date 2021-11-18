@@ -5,6 +5,7 @@ import './globalBind'
 
 export default (action_map, { delimiter = ',' } = {}) => {
   const mousetrap = new Mousetrap()
+  action_map = action_map || {}
   Object.entries(action_map).forEach(([key, options]) => {
     if (register.actionBySlug[key]) {
       // action is registered as an alias in global registry (key was a slug)
