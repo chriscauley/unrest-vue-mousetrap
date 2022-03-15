@@ -18,6 +18,12 @@
       For more information, checkout the
       <a class="link" href="http://github.com/chriscauley/unrest-vue-mousetrap">README</a>
       on github.
+      <div>
+        I don't know why but there's an input here:
+      </div>
+      <div>
+        <input class="mx-4 border border-gray-600" />
+      </div>
     </div>
   </div>
 </template>
