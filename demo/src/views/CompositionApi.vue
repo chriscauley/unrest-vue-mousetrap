@@ -2,6 +2,7 @@
 import { reactive } from 'vue'
 import Mousetrap from '@unrest/vue-mousetrap'
 import code from 'raw-loader!./raw/CompositionApi.txt'
+import copy from 'raw-loader!./copy/CompositionApi.md'
 
 export default {
   setup() {
@@ -9,41 +10,42 @@ export default {
       show_welcome: false,
       highlighted: [],
       code,
+      copy,
     })
     Mousetrap.use(() => {
       if (data.show_welcome) {
         return {
           enter: () => {
             data.show_welcome = false
-            data.highlighted = [16, 17, 18, 19]
+            data.highlighted = [18, 19, 20, 21]
           },
         }
       }
       return {
         enter: () => {
           data.show_welcome = true
-          data.highlighted = [23, 24, 25, 26]
+          data.highlighted = [25, 26, 27, 28]
         },
 
         // multiple keys can be specified with commas
-        'a,b': () => (data.highlighted = [29]),
+        'a,b': () => (data.highlighted = [31]),
 
         // behavior can be customized with an object
         '?,/': {
-          keydown: () => (data.highlighted = [33]),
-          keyup: () => (data.highlighted = [34]),
+          keydown: () => (data.highlighted = [35]),
+          keyup: () => (data.highlighted = [36]),
         },
 
         // repeat keys fire when held down
         q: {
-          repeat: () => (data.highlighted = [39]),
+          repeat: () => (data.highlighted = [41]),
         },
 
         // global hotkeys will work when focused on input fields
         // There's an input at the bottom of the page to test this
         'ctrl+b,command+b': {
           global: true,
-          keydown: () => (data.highlighted = [43, 44, 45, 46]),
+          keydown: () => (data.highlighted = [48]),
         },
       }
     })
@@ -57,25 +59,7 @@ export default {
   <div v-if="show_welcome" class="modal">
     <div class="modal-mask" />
     <div class="modal-content" style="width: 450px">
-      <h2>Welcome!</h2>
-      <p>
-        When you press a hotkey, the lines in the source code are highlighted.
-        The left column tells how many times that line has been triggered.
-      </p>
-      <p>
-        While this welcome message is open, all hotkeys other than
-        <code>enter</code> are disabled.
-      </p>
-      <p>
-        Note: In this example the first argument of <code>Mousetrap.use</code>
-        is a function. This means the hotkeys are rebound any time
-        <code>data.show_welcome</code> changes (since it is a reactive
-        property accesed during the function call).
-      </p>
-      <p>
-        Press <code>enter</code> again and then scroll down to see more hotkey
-        examples.
-      </p>
+      <markdown :source="copy" />
     </div>
   </div>
   <highlighter :lines="highlighted" :code="code" label="Basics.vue" />

@@ -14,7 +14,7 @@
     <div class="app-view">
       <router-view />
     </div>
-    <div class="text-center mb-16">
+    <div class="text-center pb-16">
       For more information, checkout the
       <a class="link" href="http://github.com/chriscauley/unrest-vue-mousetrap">README</a>
       on github.
@@ -22,7 +22,7 @@
         I don't know why but there's an input here:
       </div>
       <div>
-        <input class="mx-4 border border-gray-600" />
+        <input class="mx-4 border border-gray-600 p-1 w-48" />
       </div>
     </div>
   </div>
