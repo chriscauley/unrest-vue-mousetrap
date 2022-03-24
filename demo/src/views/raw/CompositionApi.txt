@@ -17,35 +17,35 @@ export default {
         return {
           enter: () => {
             data.show_welcome = false
-            data.highlighted = [16, 17, 18, 19]
+            data.highlighted = [18, 19, 20, 21]
           },
         }
       }
       return {
         enter: () => {
           data.show_welcome = true
-          data.highlighted = [23, 24, 25, 26]
+          data.highlighted = [25, 26, 27, 28]
         },
 
         // multiple keys can be specified with commas
-        'a,b': () => (data.highlighted = [29]),
+        'a,b': () => (data.highlighted = [31]),
 
         // behavior can be customized with an object
         '?,/': {
-          keydown: () => (data.highlighted = [33]),
-          keyup: () => (data.highlighted = [34]),
+          keydown: () => (data.highlighted = [35]),
+          keyup: () => (data.highlighted = [36]),
         },
 
         // repeat keys fire when held down
         q: {
-          repeat: () => (data.highlighted = [39]),
+          repeat: () => (data.highlighted = [41]),
         },
 
         // global hotkeys will work when focused on input fields
         // There's an input at the bottom of the page to test this
         'ctrl+b,command+b': {
           global: true,
-          keydown: () => (data.highlighted = [43, 44, 45, 46]),
+          keydown: () => (data.highlighted = [48]),
         },
       }
     })
