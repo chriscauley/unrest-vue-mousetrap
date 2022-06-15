@@ -43,7 +43,7 @@ export default {
         // There's an input at the bottom of the page to test this
         'ctrl+b,command+b': {
           global: true,
-          keydown: () => (this.highlighted = [45]),
+          keydown: () => (this.highlighted = [46]),
         },
       }
     },

@@ -59,9 +59,7 @@ export default {
 </script>
 
 <template>
-  <p class="text-xl text-center">
-    Press "?" to see help menu.
-  </p>
+  <p class="text-xl text-center">Press "?" to see help menu.</p>
   <mousetrap-modal v-if="show_help" @close="show_help = null">
     <div style="max-width: 300px">
       <p>

@@ -77,9 +77,7 @@ export default {
 
 <template>
   <div>
-    <p class="text-xl text-center">
-      This example shows how to allow users to remap hotkeys.
-    </p>
+    <p class="text-xl text-center">This example shows how to allow users to remap hotkeys.</p>
   </div>
   <div class="view-form">
     <pre>{{ rows }}</pre>
