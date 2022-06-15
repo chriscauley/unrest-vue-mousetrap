@@ -14,7 +14,7 @@ import Mousetrap from 'mousetrap'
 
 const _originalStopCallback = Mousetrap.prototype.stopCallback
 
-Mousetrap.prototype.stopCallback = function(e, element, combo, sequence) {
+Mousetrap.prototype.stopCallback = function (e, element, combo, sequence) {
   if (this.paused) {
     return true
   }
@@ -27,7 +27,7 @@ Mousetrap.prototype.stopCallback = function(e, element, combo, sequence) {
   return _originalStopCallback.call(this, e, element, combo)
 }
 
-Mousetrap.prototype.bindGlobal = function(keys, callback, action) {
+Mousetrap.prototype.bindGlobal = function (keys, callback, action) {
   this.bind(keys, callback, action)
   this._globalCallbacks = this._globalCallbacks || {}
 

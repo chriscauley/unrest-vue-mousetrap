@@ -9,16 +9,16 @@
     "lint": "eslint \"src/**/*\""
   },
   "peerDependencies": {
-    "vue": "^3.0.0"
+    "vue": "^3.2.37"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.2.2",
-    "@vue/compiler-sfc": "^3.0.0",
-    "vite": "^2.3.3",
-    "vue": "^3.0.0"
+    "@vitejs/plugin-vue": "^2.3.3",
+    "@vue/compiler-sfc": "^3.2.37",
+    "@unrest/eslint-config": "^0.0.7",
+    "vite": "^2.9.12",
+    "vue": "^3.2.37"
   },
   "dependencies": {
-    "@unrest/eslint-config": "^0.0.4",
     "mousetrap": "^1.6.5"
   }
 }
