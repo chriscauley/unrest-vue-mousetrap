@@ -1,7 +1,7 @@
 {
   "name": "@unrest/vue-mousetrap",
   "author": "Chris Cauley <cauley.chris@gmail.com>",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "main": "dist/vue-mousetrap.es.js",
   "license": "MIT",
   "scripts": {
@@ -12,9 +12,9 @@
     "vue": "^3.2.37"
   },
   "devDependencies": {
+    "@unrest/eslint-config": "^0.0.7",
     "@vitejs/plugin-vue": "^2.3.3",
     "@vue/compiler-sfc": "^3.2.37",
-    "@unrest/eslint-config": "^0.0.7",
     "vite": "^2.9.12",
     "vue": "^3.2.37"
   },
