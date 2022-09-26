@@ -162,7 +162,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
                     action.description ? (openBlock(), createElementBlock("span", {
                       key: 0,
                       title: action.description
-                    }, " \u2753 ", 8, _hoisted_6)) : createCommentVNode("", true)
+                    }, "\u2753", 8, _hoisted_6)) : createCommentVNode("", true)
                   ]),
                   createElementVNode("td", null, toDisplayString(action.display), 1)
                 ]);
@@ -192,5 +192,5 @@ var use = (action_map, options) => {
     mouse_trap.reset();
   });
 };
-var index = { Mixin, Modal, register, use };
+var index = { Mixin, mixin: Mixin, Modal, register, use };
 export { index as default };

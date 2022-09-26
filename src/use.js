@@ -1,3 +1,5 @@
+// Composition API bindings for mousetrap
+
 import bindActionMap from './bindActionMap'
 import { onMounted, onUnmounted, computed, watch } from 'vue'
 

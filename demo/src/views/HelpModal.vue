@@ -3,7 +3,7 @@ import Mousetrap from '@unrest/vue-mousetrap'
 import code from 'raw-loader!./raw/HelpModal.txt'
 
 Mousetrap.register({
-  open: 'mod+o', // string yields no overrides
+  open: 'mod+o',
   showHelp: '?,/', // will only show first key in help menu
   save: {
     name: 'Save File', // override name
@@ -37,21 +37,24 @@ export default {
   computed: {
     mousetrap() {
       return {
-        open: () => (this.highlighted = [32]),
+        open: (e) => {
+          this.highlighted = [40, 41, 42, 43]
+          e.preventDefault() // override browser's ctrl+o/cmd+o
+        },
         save: {
           keydown: (e) => {
-            this.highlighted = [42, 43, 44, 45]
+            this.highlighted = [45, 46, 47, 48]
             e.preventDefault() // override browser's ctrl+s/cmd+s
           },
           global: true, // works in input, textarea, etc
         },
-        move: () => (this.highlighted = [48]),
-        cheat: () => (this.highlighted = [49]),
+        move: () => (this.highlighted = [51]),
+        cheat: () => (this.highlighted = [52]),
         showHelp: () => {
           this.show_help = !this.show_help
-          this.highlighted = [50, 51, 52, 53]
+          this.highlighted = [53, 54, 55, 56]
         },
-        p: () => (this.highlighted = [54]), // not in global registry
+        p: () => (this.highlighted = [57]), // not in global registry
       }
     },
   },
@@ -72,5 +75,5 @@ export default {
       </p>
     </div>
   </mousetrap-modal>
-  <highlighter :lines="highlighted" :code="code" :label="HelpModal.vue" />
+  <highlighter :lines="highlighted" :code="code" label="HelpModal" />
 </template>
