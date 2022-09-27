@@ -26,9 +26,9 @@ export default (action_map, { delimiter = ',' } = {}) => {
     const bind = (...args) => (global ? mousetrap.bindGlobal(...args) : mousetrap.bind(...args))
 
     if (repeat) {
-      bind(key, (e) => (e.repeat ? repeat(e) : keydown(e)))
+      bind(key, (e) => (e.repeat ? repeat(e) : keydown(e)), 'keydown')
     } else if (keydown) {
-      bind(key, (e) => !e.repeat && keydown(e))
+      bind(key, (e) => (!e.repeat && keydown(e)), 'keydown')
     }
     keyup && bind(key, keyup, 'keyup')
     keypress && bind(key, keypress, 'keypress')

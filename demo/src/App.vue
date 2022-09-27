@@ -1,8 +1,8 @@
 <template>
   <div class="app-root">
     <header class="navbar">
-      <div class="navbar-brand">@unrest/vue-mousetrap</div>
-      <div class="navbar-section flex items-center">
+      <div class="navbar__brand">@unrest/vue-mousetrap</div>
+      <div class="navbar__section flex items-center">
         <div :class="css.tab(tab)" v-for="tab in tabs" :key="tab[0]">
           <router-link :to="tab[0]">{{ tab[1] }}</router-link>
         </div>
