@@ -22,13 +22,22 @@ export default (action_map, { delimiter = ',' } = {}) => {
       options.keydown = options.repeat
     }
 
-    const { repeat, keydown, keyup, keypress, global } = options
-    const bind = (...args) => (global ? mousetrap.bindGlobal(...args) : mousetrap.bind(...args))
+    const { repeat, keydown, keyup, keypress, global, preventDefault = true } = options
+    const bind = (...args) => {
+      const action = args[1]
+      args[1] = (e) => {
+        if (preventDefault) {
+          e.preventDefault()
+        }
+        action(e)
+      }
+      global ? mousetrap.bindGlobal(...args) : mousetrap.bind(...args)
+    }
 
     if (repeat) {
       bind(key, (e) => (e.repeat ? repeat(e) : keydown(e)), 'keydown')
     } else if (keydown) {
-      bind(key, (e) => (!e.repeat && keydown(e)), 'keydown')
+      bind(key, (e) => !e.repeat && keydown(e), 'keydown')
     }
     keyup && bind(key, keyup, 'keyup')
     keypress && bind(key, keypress, 'keypress')
